@@ -2,6 +2,7 @@
 
 # shellcheck source=functions.sh
 source /app/functions.sh
+source /app/upcloud.sh
 DEBUG="$(lc "$DEBUG")"
 
 seconds_to_wait=3600
@@ -266,6 +267,8 @@ function update_certs {
                 fi
             done
         fi
+        echo "Disabling Upcloud firewall"
+        disable_firewall
 
         echo "Creating/renewal $base_domain certificates... (${hosts_array_expanded[*]})"
         /usr/bin/simp_le \
@@ -277,6 +280,8 @@ function update_certs {
             --default_root /usr/share/nginx/html/
 
         simp_le_return=$?
+        echo "Enabling Upcloud firewall"
+        enable_firewall
 
         if [[ $REUSE_ACCOUNT_KEYS == true ]]; then
             mkdir -p "$account_dir"
